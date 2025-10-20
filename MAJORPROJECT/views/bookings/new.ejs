@@ -1,0 +1,96 @@
+<% layout("/layouts/boilerplate") %>
+
+<script>
+    // Full listing object already available safely as JSON
+    const listing = <%- JSON.stringify(listing) %>;
+</script>
+
+<div class="row mt-3">
+    <h3 class="col-6 offset-3">Book: <%= listing.title %></h3>
+    <div class="col-6 offset-3">
+        <form action="/listings/<%= listing._id %>/bookings" method="POST">
+
+            <!-- Autofill Name -->
+            <div class="mb-3">
+                <label for="name">Name</label>
+                <input type="text" name="booking[name]" class="form-control" value="<%= currUser.username %>" readonly>
+            </div>
+
+            <!-- Autofill Email -->
+            <div class="mb-3">
+                <label for="email">Email</label>
+                <input type="email" name="booking[email]" class="form-control" value="<%= currUser.email %>" readonly>
+            </div>
+
+            <!-- Dates -->
+            <div class="mb-3">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="booking[startDate]" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="booking[endDate]" class="form-control" required>
+            </div>
+
+            <!-- Price Info -->
+            <div class="mb-3">
+                <label>Price per Night: ₹<%= listing.price.toLocaleString("en-IN") %></label>
+            </div>
+
+            <!-- Total Price Display -->
+            <div class="mb-3">
+                <label>Total Price:</label>
+                <div id="totalPrice" class="fw-bold">₹0</div>
+            </div>
+
+            <!-- Hidden input to submit calculated total price -->
+            <input type="hidden" id="hiddenTotalPrice" name="booking[totalPrice]" value="0">
+
+            <button class="btn btn-success mt-3 mb-3">Confirm Booking</button>
+            <br>
+            <a href="/listings/<%= listing._id %>" class="btn btn-secondary mt-2 mb-3">⬅ Back to Listing</a>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    // Extract price safely using JS object
+    const pricePerNight = Number(listing.price) || 0;
+
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+    const totalPriceDisplay = document.getElementById("totalPrice");
+    const hiddenTotalPrice = document.getElementById("hiddenTotalPrice");
+
+    function calculateTotalPrice() {
+        const startVal = startDateInput.value;
+        const endVal = endDateInput.value;
+        if (!startVal || !endVal) {
+            totalPriceDisplay.innerText = "₹0";
+            hiddenTotalPrice.value = 0;
+            return;
+        }
+
+        const start = new Date(startVal);
+        const end = new Date(endVal);
+
+        if (isNaN(start) || isNaN(end) || end <= start) {
+            totalPriceDisplay.innerText = "₹0";
+            hiddenTotalPrice.value = 0;
+            return;
+        }
+
+        const diffTime = end - start;
+        const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const total = nights * pricePerNight;
+
+        totalPriceDisplay.innerText = "₹" + Number(total).toLocaleString("en-IN");
+        hiddenTotalPrice.value = total;
+    }
+
+    startDateInput?.addEventListener("change", calculateTotalPrice);
+    endDateInput?.addEventListener("change", calculateTotalPrice);
+</script>

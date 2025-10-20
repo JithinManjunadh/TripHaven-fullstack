@@ -1,0 +1,40 @@
+<% layout("/layouts/boilerplate") %>
+
+
+<div class="row mt-3">
+    <h3 class="col-6 offset-3">My Listings</h3>
+    <div class="col-6 offset-3">
+        <hr>
+        <% if (listings.length === 0) { %>
+            <p>You haven't listed any properties yet.</p>
+        <% } %>
+
+        <% listings.forEach(l => { %>
+        <div class="card mb-3 p-3 d-flex flex-row align-items-center">
+        
+        <!-- Left Side - Listing Image -->
+            <% if (l.image && l.image.url) { %>
+                <img src="<%= l.image.url %>" alt="Listing Image" style="width: 120px; height: 100px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+            <% } else { %>
+                <div style="width: 120px; height: 100px; background: #ddd; border-radius: 5px; margin-right: 15px;"></div>
+            <% } %>
+
+        <!-- Right Side - Details -->
+            <div class="flex-grow-1">
+                <h5 class="mb-1"><%= l.title %></h5>
+                <p class="text-muted mb-1"><%= l.location %></p>
+                <p class="mb-2"><strong>₹<%= l.price.toLocaleString("en-IN") %></strong> / night</p>
+            </div>
+
+        <!--  Actions -->
+            <div>
+                <a href="/listings/<%= l._id %>" class="btn btn-dark btn-sm">View</a>
+                <a href="/listings/<%= l._id %>/edit" class="btn btn-warning btn-sm">Edit</a>
+            </div>
+        </div>
+        <% }) %>
+
+    </div>
+    <a href="/dashboard" class="btn btn-secondary mb-3 col-6 offset-3">⬅ Back to Dashboard</a>
+</div>
+

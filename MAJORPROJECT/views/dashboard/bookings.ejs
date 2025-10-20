@@ -1,0 +1,35 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+    <h3 class="col-6 offset-3">My Bookings</h3>
+    <hr class="col-6 offset-3 mt-1">
+    <% if (bookings.length === 0) { %>
+        <p class="col-6 offset-3 mt-1">No bookings found.</p>
+    <% } %>
+
+    <% bookings.forEach(b => { 
+        const nights = Math.ceil((new Date(b.endDate) - new Date(b.startDate)) / (1000 * 60 * 60 * 24));
+        const totalPrice = b.listing.price * nights;
+    %>
+    <div class="card mb-3 p-3 d-flex flex-row col-6 offset-3">
+        <hr>
+        
+        <% if (b.listing.image && b.listing.image.url) { %>
+            <img src="<%= b.listing.image.url %>" 
+                 alt="Listing Image" 
+                 style="width: 120px; height: 100px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+        <% } else { %>
+            <div style="width: 120px; height: 100px; background: #ddd; border-radius: 5px; margin-right: 15px;"></div>
+        <% } %>
+        
+        <div>
+            <h5><%= b.listing.title %></h5>
+            <p>From: <%= b.startDate.toDateString() %> — To: <%= b.endDate.toDateString() %></p>
+            <p>Price per night: ₹<%= b.listing.price.toLocaleString("en-IN") %></p>
+            <p>Total Price: ₹<%= totalPrice.toLocaleString("en-IN") %> (<%= nights %> nights)</p>
+        </div>
+    </div>
+    <% }) %>
+
+    <a href="/dashboard" class="btn btn-secondary mb-3 col-6 offset-3">⬅ Back to Dashboard</a>
+</div>
