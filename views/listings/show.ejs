@@ -91,22 +91,23 @@
             </div>
         <% } %>
         <% if(listing.reviews.length > 0) { %>
-        <div class="row">
-            <p><b>All Reviews</b></p>
-            <% for(review of listing.reviews){ %>
-            <div class="card col-5 ms-3 mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">@<%= review.author.username %></h5>
-                    <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
-                    <p class="card-text"><%= review.comment %></p>
-                    <form class="mb-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+        <div class="reviews-container d-flex flex-wrap justify-content-center gap-3 mt-3">
+            <% for(let i=0; i < listing.reviews.length; i++) { const review=listing.reviews[i]; %>
+                <div class="review-card p-3 rounded shadow-sm" style="flex: 1 1 45%; max-width: 500px; min-width: 250px;">
+                    <h5 class="mb-2">@<%= review.author.username %>
+                    </h5>
+                    <p class="starability-result mb-2" data-rating="<%= review.rating %>"></p>
+                    <p style="line-height:1.6; margin-bottom: 10px;">
+                        <%= review.comment %>
+                    </p>
+                    <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
                         <button class="btn btn-sm btn-dark">Delete</button>
                     </form>
                 </div>
-            </div>
-            <% } %>
+                <% } %>
         </div>
-        <% } %> 
+        <% } %>
+        <hr>
     </div>
     <div class="col-6 offset-3 mt-3 mb-3">
         <h3>Where you will be</h3>
