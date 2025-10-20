@@ -7,7 +7,15 @@ module.exports.createReview = async(req,res)=>{
     // if (!req.body.review) {
     //     throw new ExpressError(400, "Review data is missing!");
     // }
+    
     let listing = await Listing.findById(req.params.id);
+
+    // Backend safety: prevent owner from reviewing their own listing
+    if (listing.owner.equals(req.user._id)) {
+        req.flash("error", "You cannot review your own listing!");
+        return res.redirect(`/listings/${listingId}`);
+    }
+    
     let newReview =  new Review(req.body.review);
     newReview.author = req.user._id;
 
